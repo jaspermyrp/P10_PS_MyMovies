@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -15,6 +17,7 @@ public class DisplayMovie extends AppCompatActivity {
     ImageView ivRatings;
     TextView tvTitle, tvDescription, tvMovieDescription, tvWatchedOn;
     RatingBar ratingBar;
+    Button btnDelete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +30,10 @@ public class DisplayMovie extends AppCompatActivity {
         tvMovieDescription = findViewById(R.id.tvMovieDescription);
         tvWatchedOn = findViewById(R.id.tvWatchedOn);
         ratingBar = findViewById(R.id.ratingBar);
+        btnDelete = findViewById(R.id.btnDelete);
 
         Intent intent = getIntent();
-        String title = intent.getStringExtra("title");
+        final String title = intent.getStringExtra("title");
         String year = intent.getStringExtra("year");
         String rated = intent.getStringExtra("rated");
         String genre = intent.getStringExtra("genre");
@@ -58,6 +62,17 @@ public class DisplayMovie extends AppCompatActivity {
         tvMovieDescription.setText(description);
         tvWatchedOn.setText("Watch on: "+watched_on+"\nIn Theatre: "+in_theatre);
         ratingBar.setRating(ratings);
+
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DisplayMovie.this, MainActivity.class);
+                intent.putExtra("source", "DisplayMovie");
+                intent.putExtra("title", title);
+                startActivity(intent);
+                finish();
+            }
+        });
 
     }
 }

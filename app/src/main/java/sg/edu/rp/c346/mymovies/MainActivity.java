@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -37,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         // Add Movie objects to ArrayList //
 
         Movie movie1 = new Movie("The Avengers", "2012", "pg13", "Action | Sci-Fi", stringToCalendar("15/11/2014"), "Golden Village - Bishan", "Nick Fury of SHIELD assembles a team of superheroes to save the planet from Loki and his army.", 4);
-        Movie movie2 = new Movie("Planes", "2013", "pg", "Animation | Comedy", stringToCalendar("15/5/2015"), "Cathay - AMK Hub", "A crop-dusting plane with a fear of heights live his dream of competing in a fmaous around-the-world aerial race.", 2);
+        Movie movie2 = new Movie("Planes", "2013", "pg", "Animation | Comedy", stringToCalendar("15/5/2015"), "Cathay - AMK Hub", "A crop-dusting plane with a fear of heights live his dream of competing in a famous around-the-world aerial race.", 2);
         alMovies.add(movie1);
         alMovies.add(movie2);
 
@@ -62,6 +65,46 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+        // Get Intent that started this Activity //
+        Intent intent = getIntent();
+
+        if (getIntent().hasExtra("source")) {
+            Log.d("Intent >", intent.toString());
+
+            if (intent.getStringExtra("source").equals("AddMovie")) {
+                String title = intent.getStringExtra("title");
+                String year = intent.getStringExtra("year");
+                String rated = intent.getStringExtra("rated");
+                String genre = intent.getStringExtra("genre");
+                String in_theatre = intent.getStringExtra("in_theatre");
+                String description = intent.getStringExtra("description");
+                int ratings = intent.getIntExtra("ratings", -1);
+
+                Log.d("Test", "title " + title);
+                Log.d("Test", "ratings " + ratings);
+
+                Movie newMovie = new Movie(title, year, rated, genre, stringToCalendar("16/7/2019"), in_theatre, description, ratings);
+                alMovies.add(newMovie);
+                caMovie.notifyDataSetChanged();
+            } else if (intent.getStringExtra("source").equals("DisplayMovie")) {
+                String title = intent.getStringExtra("title");
+                for (Movie movie : alMovies) {
+                    if (movie.getTitle().equals(title)) {
+                        alMovies.remove(movie);
+                    }
+                }
+                caMovie.notifyDataSetChanged();
+
+            } else {
+                // Do nothing //
+            }
+
+
+        }
+
+
     }
 
     public Calendar stringToCalendar(String strDate) {
@@ -70,12 +113,31 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             date = formatter.parse(strDate);
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
 
         return cal;
+    }
+
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.menuAdd) {
+            Intent intent = new Intent(MainActivity.this, AddMovie.class);
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
